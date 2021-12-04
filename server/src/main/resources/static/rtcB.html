@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A</title>
+</head>
+<body>
+
+<div class="video-box">
+    <video src="" id="rtcB" controls autoplay></video>
+    <h5>B</h5>
+    <button onclick="call()">call</button>
+    <button onclick="hangup()">hangup</button>
+</div>
+
+<script>
+    let peerB = null;
+
+    function initPeer() {
+        // 创建呼叫端
+        let PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        peerB = new PeerConnection();
+        peerB.onaddstream = (event) => { // 监听是否有媒体流接入，如果有就赋值给 rtcB 的 src
+            console.log('event-stream', event);
+            let video = document.querySelector('#rtcB');
+            video.srcObject = event.stream;
+        };
+
+        // 监听 B 的ICE候选信息
+        // 如果收集到，就添加给 A
+        peerB.onicecandidate = (event) => {
+            if (event.candidate) {
+                addIceCandidateA(event.candidate)
+            }
+        };
+    }
+
+    function addIceCandidateA(candidate) {
+        //thisData.peerA.addIceCandidate(event.candidate);
+
+        socket.send(
+            JSON.stringify({
+                type:"addIceCandidateA",
+                data:candidate
+            })
+        )
+    }
+
+    async function call() {
+        try {
+            let offer = await peerB.createOffer({
+                offerToReceiveAudio: 1,
+                offerToReceiveVideo: 1
+            }); // 创建 offer
+
+            await onCreateOffer(offer);
+        } catch (e) {
+            console.log('createOffer: ', e);
+        }
+    }
+
+    async function onCreateOffer(desc) {
+        try {
+            await peerB.setLocalDescription(desc); // 呼叫端设置本地 offer 描述
+        } catch (e) {
+            console.log('Offer-setLocalDescription: ', e);
+        }
+
+        setRemoteDescriptionA(desc)
+
+    }
+
+
+    function setRemoteDescriptionA(desc) {
+        socket.send(
+            JSON.stringify({
+                type:"setRemoteDescriptionA",
+                data:desc
+            })
+        )
+        // try {
+        //     await peerA.setRemoteDescription(desc); // 接收端设置远程 offer 描述
+        // } catch (e) {
+        //     console.log('Offer-setRemoteDescription: ', e);
+        // }
+        // return await peerA.createAnswer(); // 接收端创建 answer
+    }
+
+    async function onCreateAnswer(desc) {
+        // try {
+        //     await peerA.setLocalDescription(desc); // 接收端设置本地 answer 描述
+        // } catch (e) {
+        //     console.log('answer-setLocalDescription: ', e);
+        // }
+        try {
+            await peerB.setRemoteDescription(desc); // 呼叫端设置远程 answer 描述
+        } catch (e) {
+            console.log('answer-setRemoteDescription: ', e);
+        }
+    }
+
+
+    function hangup() {
+        peerB.close();
+        socket.send(
+            JSON.stringify({
+                type:"hangup",
+                data:""
+            })
+        )
+    }
+
+    initPeer()
+
+
+    const socket = new WebSocket('wss://192.168.50.43:8081/rtc');
+    socket.onopen = () => {
+        console.log('信令通道创建成功！');
+    }
+    socket.onerror = () => console.error('信令通道创建失败！');
+
+    socket.onmessage = (ev) => {
+        const {type, data} = JSON.parse(ev.data)
+        console.log('onmessage ' + ev.data);
+        switch (type) {
+            case "onCreateAnswer":
+                onCreateAnswer(data)
+                break;
+            case "addIceCandidateB":
+                peerB.addIceCandidate(data);
+                break;
+            case "hangup":
+                hangup()
+                break;
+        }
+    }
+
+</script>
+</body>
+</html>

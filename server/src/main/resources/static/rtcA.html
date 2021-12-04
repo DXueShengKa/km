@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A</title>
+</head>
+<body>
+<div class="video-box">
+    <video src="" id="rtcA" controls autoplay></video>
+    <h5>A</h5>
+</div>
+
+<script>
+    let peerA = null;
+
+    function initPeer(localstream) {
+        // 创建输出端 PeerConnection
+        let PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        peerA = new PeerConnection();
+        peerA.addStream(localstream); // 添加本地流
+        // 监听 A 的ICE候选信息
+        // 如果收集到，就添加给 B
+        peerA.onicecandidate = (event) => {
+            if (event.candidate) {
+                addIceCandidateB(event.candidate)
+            }
+        };
+    }
+
+    function addIceCandidateB(candidate){
+        //thisData.peerB.addIceCandidate(event.candidate);
+        socket.send(
+            JSON.stringify({
+                type:"addIceCandidateB",
+                data:candidate
+            })
+        )
+
+    }
+
+    async function setRemoteDescriptionA(desc){
+        try {
+            await peerA.setRemoteDescription(desc); // 接收端设置远程 offer 描述
+        } catch (e) {
+            console.log('Offer-setRemoteDescription: ', e);
+        }
+        try {
+            let answer = await peerA.createAnswer()
+            socket.send(JSON.stringify({
+                type:"onCreateAnswer",
+                data:answer
+            }))
+
+            await onCreateAnswer(answer)
+
+            return answer; // 接收端创建 answer
+
+        }catch (e) {
+            console.log('createAnswer: ', e);
+        }
+
+    }
+
+    async function onCreateAnswer(desc) {
+        try {
+            await peerA.setLocalDescription(desc); // 接收端设置本地 answer 描述
+        } catch (e) {
+            console.log('answer-setLocalDescription: ', e);
+        }
+    }
+
+    function hangup() {
+        peerA.close();
+    }
+
+    async function createMedia() {
+        // 保存本地流到全局
+        let localstream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // console.log(thisData.localstream);
+        // console.log(thisData.localstream.getVideoTracks(), thisData.localstream.getAudioTracks());
+        let video = document.querySelector('#rtcA');
+        video.srcObject = localstream;
+        initPeer(localstream); // 获取到媒体流后，调用函数初始化 RTCPeerConnection
+    }
+
+    createMedia()
+
+
+    const socket = new WebSocket('wss://192.168.50.43:8081/rtc');
+    socket.onopen = () => {
+        console.log('信令通道创建成功！');
+    }
+    socket.onerror = () => console.error('信令通道创建失败！');
+
+    socket.onmessage = (ev) => {
+        const {type, data} = JSON.parse(ev.data)
+        console.log('onmessage ' + ev.data);
+        switch (type) {
+            case "addIceCandidateA":
+                peerA.addIceCandidate(data);
+                break;
+            case "hangup":
+                hangup()
+                break;
+            case "setRemoteDescriptionA":
+                setRemoteDescriptionA(data)
+                break;
+        }
+    }
+</script>
+</body>
+</html>
