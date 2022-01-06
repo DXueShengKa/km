@@ -42,20 +42,20 @@ dependencyResolutionManagement {
 
 fun VersionCatalogBuilder.kmLibs() {
     //开始 ---------------------------  版本号 -------------------------------  开始
-    version("compose", "1.0.0")
-    version("kotlin", "1.5.31")
-    version("ksp", "1.5.31-1.0.0")
-    version("kotlinxCoroutines", "1.5.2")
-    version("kotlinxSerialization", "1.3.0")
-    version("kotlinxDatetime", "0.3.0")
+    version("compose", "1.0.1")
+    version("kotlin", "1.6.10")
+    version("ksp", "1.6.10-1.0.2")
+    version("kotlinxCoroutines", "1.6.0")
+    version("kotlinxSerialization", "1.3.2")
+    version("kotlinxDatetime", "0.3.1")
     //kotlin js扩展包装库
-    version("kotlinWrappersBom","0.0.1-pre.261-kotlin-1.5.31")
+    version("kotlinWrappersBom","0.0.1-pre.287-kotlin-1.6.10")
     version("ktor", "1.6.4")
     version("springBoot", "2.5.4")
     //多平台导航库
     version("decompose", "0.4.0")
     //多平台依赖注入
-    version("koin", "3.1.3")
+    version("koin", "3.1.4")
 
     version("npm-muiMaterial","5.0.4")
     version("npm-muiLab","5.0.0-alpha.51")

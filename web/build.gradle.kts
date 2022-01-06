@@ -14,12 +14,9 @@ kotlin {
     js(IR) {
 
         browser {
-            webpackTask {
+            commonWebpackConfig {
                 cssSupport.enabled = true
-            }
-
-            runTask {
-                cssSupport.enabled = true
+//                outputPath = File(rootDir,"server/build/resources/main/static")
             }
 
             testTask {
@@ -50,10 +47,10 @@ kotlin {
                 }
 
                 with(kmLibs.versions.npm) {
-                    implementation(npm("@mui/material", muiMaterial.get()))
-                    implementation(npm("@mui/lab", muiLab.get()))
-                    implementation(npm("react", react.get()))
-                    implementation(npm("react-dom", reactDom.get()))
+//                    implementation(npm("@mui/material", muiMaterial.get()))
+//                    implementation(npm("@mui/lab", muiLab.get()))
+//                    implementation(npm("react", react.get()))
+//                    implementation(npm("react-dom", reactDom.get()))
                     implementation(npm("@emotion/react", emotionReact.get()))
                     implementation(npm("@emotion/styled", emotionStyled.get()))
                 }
@@ -66,9 +63,11 @@ kotlin {
 }
 
 // a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273
+/*
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
         versions.webpackDevServer.version = "4.0.0"
         versions.webpackCli.version = "4.9.0"
     }
 }
+*/

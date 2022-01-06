@@ -5,7 +5,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.ValueObserver
 import csstype.HtmlAttributes
 import kotlinext.js.Object
-import kotlinext.js.jsObject
+import kotlinext.js.jso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ internal fun Any.uniqueId(): Long {
     var id: dynamic = asDynamic().__unique_id
     if (id == undefined) {
         id = ++uniqueId
-        Object.defineProperty<Any, Long>(this, "__unique_id", jsObject { value = id })
+        Object.defineProperty<Any, Long>(this, "__unique_id", jso { value = id })
     }
     return id
 }

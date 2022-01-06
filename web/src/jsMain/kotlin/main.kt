@@ -48,10 +48,13 @@ fun main() {
 
     document.title = "kt多平台web版"
 
-    render(document.getElementById("root")){
+    render(document.getElementById("root")!!){
         div {
-//            child(App::class){}
-            child(rtcTest)
+            child(App::class){}
+            h1 {
+                +"111"
+            }
+//            child(rtcTest)
 //
 //            child(WsUI::class){
 //                attrs.component = UserWs("2")

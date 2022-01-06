@@ -6,7 +6,7 @@ import org.koin.core.context.startKoin
 
 fun mainInit(){
     startKoin {
-        printLogger()
         modules(httpClientModule,apiModule)
+        printLogger()
     }
 }

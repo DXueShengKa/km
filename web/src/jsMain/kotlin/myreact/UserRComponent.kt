@@ -99,7 +99,7 @@ class UserInfoRComponent : RenderComponent<UserInfoComponent, BoxedState<UserInf
                     attrs.onClick = {
                         component.onBack()
                     }
-                    attrs.size = "small"
+                    attrs.size = Size.small
                     +"返回"
                 }
             }

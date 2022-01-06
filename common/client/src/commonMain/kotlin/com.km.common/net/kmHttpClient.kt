@@ -79,8 +79,8 @@ val KmHttpClient = HttpClient() {
 class NetException(message:String) : Exception(message)
 
 object KmBaseUrl{
-    const val host = "192.168.50.43"
+    const val host = "192.168.1.6"
     const val port = 8081
-    val protocol = URLProtocol.HTTPS
+    val protocol = URLProtocol.HTTP
     val url = "${protocol.name}://${host}:$port"
 }

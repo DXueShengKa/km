@@ -14,10 +14,18 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.km.common.api_impl.apiModule
 import com.km.common.mainInit
 import com.km.common.navigation.user.UserRootComponent
+import com.km.common.net.httpClientModule
 import com.km.common_ui.UserRootUI
 import com.km.common_ui.WsUI
+import io.ktor.utils.io.*
+import org.koin.core.context.startKoin
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -54,6 +62,3 @@ fun main() {
     }
 }
 
-//fun main() {
-//    println(com.km.processor.KspTest.string)
-//}

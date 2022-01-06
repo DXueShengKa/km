@@ -13,9 +13,9 @@ open class CommonApplication : Application() {
         super.onCreate()
 
         startKoin {
-            androidLogger()
             androidContext(this@CommonApplication)
             modules(httpClientModule,apiModule)
+            androidLogger()
         }
     }
 }

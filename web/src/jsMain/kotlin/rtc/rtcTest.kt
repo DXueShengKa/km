@@ -22,14 +22,15 @@ import react.MutableRefObject
 import react.Props
 import react.createRef
 import react.dom.div
-import react.functionComponent
+import react.fc
 import react.useEffect
 import react.useLayoutEffectOnce
 import react.useRef
 import kotlin.js.Date
 
 
-val rtcTest = functionComponent<Props> {
+
+val rtcTest = fc<Props> {
 
     val containerRef = useRef(createRef<HTMLElement>().current)
 
